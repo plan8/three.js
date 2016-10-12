@@ -35706,7 +35706,18 @@ PositionalAudio.prototype = Object.assign( Object.create( Audio.prototype ), {
 
 			position.setFromMatrixPosition( this.matrixWorld );
 
-			this.panner.setPosition( position.x, position.y, position.z );
+			if ( this.panner.positionX ) {
+
+				this.panner.positionX.setValueAtTime( position.x, this.context.currentTime );
+				this.panner.positionY.setValueAtTime( position.y, this.context.currentTime );
+				this.panner.positionZ.setValueAtTime( position.z, this.context.currentTime );
+
+			} else {
+
+				this.panner.setPosition( position.x, position.y, position.z );
+
+			}
+
 
 		};
 
