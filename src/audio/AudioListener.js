@@ -103,15 +103,27 @@ AudioListener.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			if ( listener.positionX ) {
 
-				listener.positionX.setValueAtTime( position.x, this.context.currentTime );
-				listener.positionY.setValueAtTime( position.y, this.context.currentTime );
-				listener.positionZ.setValueAtTime( position.z, this.context.currentTime );
-				listener.forwardX.setValueAtTime( orientation.x, this.context.currentTime );
-				listener.forwardY.setValueAtTime( orientation.y, this.context.currentTime );
-				listener.forwardZ.setValueAtTime( orientation.z, this.context.currentTime );
-				listener.upX.setValueAtTime( up.x, this.context.currentTime );
-				listener.upY.setValueAtTime( up.y, this.context.currentTime );
-				listener.upZ.setValueAtTime( up.z, this.context.currentTime );
+				var scheduleTime = this.context.currentTime + 0.01;
+
+				listener.positionX.cancelScheduledValues( this.context.currentTime );
+				listener.positionY.cancelScheduledValues( this.context.currentTime );
+				listener.positionZ.cancelScheduledValues( this.context.currentTime );
+				listener.forwardX.cancelScheduledValues( this.context.currentTime );
+				listener.forwardY.cancelScheduledValues( this.context.currentTime );
+				listener.forwardZ.cancelScheduledValues( this.context.currentTime );
+				listener.upX.cancelScheduledValues( this.context.currentTime );
+				listener.upY.cancelScheduledValues( this.context.currentTime );
+				listener.upZ.cancelScheduledValues( this.context.currentTime );
+
+				listener.positionX.setValueAtTime( position.x, scheduleTime );
+				listener.positionY.setValueAtTime( position.y, scheduleTime );
+				listener.positionZ.setValueAtTime( position.z, scheduleTime );
+				listener.forwardX.setValueAtTime( orientation.x, scheduleTime );
+				listener.forwardY.setValueAtTime( orientation.y, scheduleTime );
+				listener.forwardZ.setValueAtTime( orientation.z, scheduleTime );
+				listener.upX.setValueAtTime( up.x, scheduleTime );
+				listener.upY.setValueAtTime( up.y, scheduleTime );
+				listener.upZ.setValueAtTime( up.z, scheduleTime );
 
 			}
 			else {
