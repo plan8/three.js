@@ -35409,7 +35409,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 	},
 
-	play: function () {
+	play: function ( when ) {
 
 		if ( this.isPlaying === true ) {
 
@@ -35430,7 +35430,10 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 		source.buffer = this.source.buffer;
 		source.loop = this.source.loop;
 		source.onended = this.source.onended;
-		source.start( 0, this.startTime );
+
+		when = when || 0;
+
+		source.start( this.context.currentTime + when, this.startTime );
 		source.playbackRate.value = this.playbackRate;
 
 		this.isPlaying = true;
@@ -35458,7 +35461,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 	},
 
-	stop: function () {
+	stop: function ( when ) {
 
 		if ( this.hasPlaybackControl === false ) {
 
@@ -35467,7 +35470,9 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		}
 
-		this.source.stop();
+		when = when || 0;
+
+		this.source.stop( this.context.currentTime + when );
 		this.startTime = 0;
 		this.isPlaying = false;
 
