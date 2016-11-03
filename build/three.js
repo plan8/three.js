@@ -35400,7 +35400,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 	setBuffer: function ( audioBuffer ) {
 
-		this.source.buffer = audioBuffer;
+		this.audioBuffer = audioBuffer;
 		this.sourceType = 'buffer';
 
 		if ( this.autoplay ) this.play();
@@ -35427,7 +35427,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		var source = this.context.createBufferSource();
 
-		source.buffer = this.source.buffer;
+		source.buffer = this.audioBuffer;
 		source.loop = this.source.loop;
 		source.onended = this.source.onended;
 
