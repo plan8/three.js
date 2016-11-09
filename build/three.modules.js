@@ -1281,7 +1281,7 @@ Texture.prototype = {
 Object.assign( Texture.prototype, EventDispatcher.prototype );
 
 var count = 0;
-function TextureIdCount() { return count++; }
+function TextureIdCount() { return count++; };
 
 /**
  * @author supereggbert / http://www.paulbrunt.co.uk/
@@ -3311,7 +3311,7 @@ Vector3.prototype = {
 		if ( typeof m === 'number' ) {
 
 			console.warn( 'THREE.Vector3: setFromMatrixColumn now expects ( matrix, index ).' );
-			var temp = m;
+			var temp = m
 			m = index;
 			index = temp;
 
@@ -7333,6 +7333,8 @@ Material.prototype = {
 		if ( this.emissive && this.emissive.isColor ) data.emissive = this.emissive.getHex();
 		if ( this.specular && this.specular.isColor ) data.specular = this.specular.getHex();
 		if ( this.shininess !== undefined ) data.shininess = this.shininess;
+		if ( this.clearCoat !== undefined ) data.clearCoat = this.clearCoat;
+		if ( this.clearCoatRoughness !== undefined ) data.clearCoatRoughness = this.clearCoatRoughness;
 
 		if ( this.map && this.map.isTexture ) data.map = this.map.toJSON( meta ).uuid;
 		if ( this.alphaMap && this.alphaMap.isTexture ) data.alphaMap = this.alphaMap.toJSON( meta ).uuid;
@@ -7512,7 +7514,7 @@ Material.prototype = {
 Object.assign( Material.prototype, EventDispatcher.prototype );
 
 var count$1 = 0;
-function MaterialIdCount() { return count$1++; }
+function MaterialIdCount() { return count$1++; };
 
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -11199,7 +11201,7 @@ Object.assign( Object3D.prototype, EventDispatcher.prototype, {
 } );
 
 var count$2 = 0;
-function Object3DIdCount() { return count$2++; }
+function Object3DIdCount() { return count$2++; };
 
 /**
  * @author bhouston / http://clara.io
@@ -13421,7 +13423,7 @@ Object.assign( Geometry.prototype, EventDispatcher.prototype, {
 } );
 
 var count$3 = 0;
-function GeometryIdCount() { return count$3++; }
+function GeometryIdCount() { return count$3++; };
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -31100,7 +31102,7 @@ KeyframeTrackPrototype = {
 
 	}
 
-};
+}
 
 function KeyframeTrackConstructor( name, times, values, interpolation ) {
 
@@ -31919,6 +31921,8 @@ Object.assign( MaterialLoader.prototype, {
 		if ( json.emissive !== undefined ) material.emissive.setHex( json.emissive );
 		if ( json.specular !== undefined ) material.specular.setHex( json.specular );
 		if ( json.shininess !== undefined ) material.shininess = json.shininess;
+		if ( json.clearCoat !== undefined ) material.clearCoat = json.clearCoat;
+		if ( json.clearCoatRoughness !== undefined ) material.clearCoatRoughness = json.clearCoatRoughness;
 		if ( json.uniforms !== undefined ) material.uniforms = json.uniforms;
 		if ( json.vertexShader !== undefined ) material.vertexShader = json.vertexShader;
 		if ( json.fragmentShader !== undefined ) material.fragmentShader = json.fragmentShader;
@@ -35047,7 +35051,7 @@ ShapePath.prototype = {
 		return shapes;
 
 	}
-};
+}
 
 /**
  * @author zz85 / http://www.lab4games.net/zz85/blog
@@ -35644,8 +35648,37 @@ AudioListener.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			orientation.set( 0, 0, - 1 ).applyQuaternion( quaternion );
 
-			listener.setPosition( position.x, position.y, position.z );
-			listener.setOrientation( orientation.x, orientation.y, orientation.z, up.x, up.y, up.z );
+			if ( listener.positionX ) {
+
+				var scheduleTime = this.context.currentTime + 0.01;
+
+				listener.positionX.cancelScheduledValues( this.context.currentTime );
+				listener.positionY.cancelScheduledValues( this.context.currentTime );
+				listener.positionZ.cancelScheduledValues( this.context.currentTime );
+				listener.forwardX.cancelScheduledValues( this.context.currentTime );
+				listener.forwardY.cancelScheduledValues( this.context.currentTime );
+				listener.forwardZ.cancelScheduledValues( this.context.currentTime );
+				listener.upX.cancelScheduledValues( this.context.currentTime );
+				listener.upY.cancelScheduledValues( this.context.currentTime );
+				listener.upZ.cancelScheduledValues( this.context.currentTime );
+
+				listener.positionX.setValueAtTime( position.x, scheduleTime );
+				listener.positionY.setValueAtTime( position.y, scheduleTime );
+				listener.positionZ.setValueAtTime( position.z, scheduleTime );
+				listener.forwardX.setValueAtTime( orientation.x, scheduleTime );
+				listener.forwardY.setValueAtTime( orientation.y, scheduleTime );
+				listener.forwardZ.setValueAtTime( orientation.z, scheduleTime );
+				listener.upX.setValueAtTime( up.x, scheduleTime );
+				listener.upY.setValueAtTime( up.y, scheduleTime );
+				listener.upZ.setValueAtTime( up.z, scheduleTime );
+
+			}
+			else {
+
+				listener.setPosition( position.x, position.y, position.z );
+				listener.setOrientation( orientation.x, orientation.y, orientation.z, up.x, up.y, up.z );
+
+			}
 
 		};
 
@@ -35706,7 +35739,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 	setBuffer: function ( audioBuffer ) {
 
-		this.source.buffer = audioBuffer;
+		this.audioBuffer = audioBuffer;
 		this.sourceType = 'buffer';
 
 		if ( this.autoplay ) this.play();
@@ -35715,7 +35748,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 	},
 
-	play: function () {
+	play: function ( when ) {
 
 		if ( this.isPlaying === true ) {
 
@@ -35733,10 +35766,13 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		var source = this.context.createBufferSource();
 
-		source.buffer = this.source.buffer;
+		source.buffer = this.audioBuffer;
 		source.loop = this.source.loop;
 		source.onended = this.source.onended;
-		source.start( 0, this.startTime );
+
+		when = when || 0;
+
+		source.start( this.context.currentTime + when, this.startTime );
 		source.playbackRate.value = this.playbackRate;
 
 		this.isPlaying = true;
@@ -35764,7 +35800,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 	},
 
-	stop: function () {
+	stop: function ( when ) {
 
 		if ( this.hasPlaybackControl === false ) {
 
@@ -35773,7 +35809,9 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		}
 
-		this.source.stop();
+		when = when || 0;
+
+		this.source.stop( this.context.currentTime + when );
 		this.startTime = 0;
 		this.isPlaying = false;
 
@@ -36024,7 +36062,18 @@ PositionalAudio.prototype = Object.assign( Object.create( Audio.prototype ), {
 
 			position.setFromMatrixPosition( this.matrixWorld );
 
-			this.panner.setPosition( position.x, position.y, position.z );
+			if ( this.panner.positionX ) {
+
+				this.panner.positionX.setValueAtTime( position.x, this.context.currentTime );
+				this.panner.positionY.setValueAtTime( position.y, this.context.currentTime );
+				this.panner.positionZ.setValueAtTime( position.z, this.context.currentTime );
+
+			} else {
+
+				this.panner.setPosition( position.x, position.y, position.z );
+
+			}
+
 
 		};
 
@@ -37373,7 +37422,7 @@ function AnimationAction( mixer, clip, localRoot ) {
 	this.zeroSlopeAtStart 	= true;		// for smooth interpolation w/o separate
 	this.zeroSlopeAtEnd		= true;		// clips for start, loop and end
 
-}
+};
 
 AnimationAction.prototype = {
 
