@@ -35656,7 +35656,7 @@
 
 				if ( listener.positionX ) {
 
-					var scheduleTime = this.context.currentTime + 0.01;
+					var scheduleTime = this.context.currentTime;
 
 					listener.positionX.cancelScheduledValues( this.context.currentTime );
 					listener.positionY.cancelScheduledValues( this.context.currentTime );
@@ -35668,15 +35668,15 @@
 					listener.upY.cancelScheduledValues( this.context.currentTime );
 					listener.upZ.cancelScheduledValues( this.context.currentTime );
 
-					listener.positionX.setValueAtTime( position.x, scheduleTime );
-					listener.positionY.setValueAtTime( position.y, scheduleTime );
-					listener.positionZ.setValueAtTime( position.z, scheduleTime );
-					listener.forwardX.setValueAtTime( orientation.x, scheduleTime );
-					listener.forwardY.setValueAtTime( orientation.y, scheduleTime );
-					listener.forwardZ.setValueAtTime( orientation.z, scheduleTime );
-					listener.upX.setValueAtTime( up.x, scheduleTime );
-					listener.upY.setValueAtTime( up.y, scheduleTime );
-					listener.upZ.setValueAtTime( up.z, scheduleTime );
+					listener.positionX.setTargetAtTime( position.x, scheduleTime, 0.1 );
+					listener.positionY.setTargetAtTime( position.y, scheduleTime, 0.1 );
+					listener.positionZ.setTargetAtTime( position.z, scheduleTime, 0.1 );
+					listener.forwardX.setTargetAtTime( orientation.x, scheduleTime, 0.1 );
+					listener.forwardY.setTargetAtTime( orientation.y, scheduleTime, 0.1 );
+					listener.forwardZ.setTargetAtTime( orientation.z, scheduleTime, 0.1 );
+					listener.upX.setTargetAtTime( up.x, scheduleTime, 0.1 );
+					listener.upY.setTargetAtTime( up.y, scheduleTime, 0.1 );
+					listener.upZ.setTargetAtTime( up.z, scheduleTime, 0.1 );
 
 				}
 				else {
