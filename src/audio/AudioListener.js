@@ -101,17 +101,29 @@ AudioListener.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			orientation.set( 0, 0, - 1 ).applyQuaternion( quaternion );
 
-			if ( listener.positionX ) {
+			if ( listener.positionX !== undefined ) {
 
-				listener.positionX.setValueAtTime( position.x, this.context.currentTime );
-				listener.positionY.setValueAtTime( position.y, this.context.currentTime );
-				listener.positionZ.setValueAtTime( position.z, this.context.currentTime );
-				listener.forwardX.setValueAtTime( orientation.x, this.context.currentTime );
-				listener.forwardY.setValueAtTime( orientation.y, this.context.currentTime );
-				listener.forwardZ.setValueAtTime( orientation.z, this.context.currentTime );
-				listener.upX.setValueAtTime( up.x, this.context.currentTime );
-				listener.upY.setValueAtTime( up.y, this.context.currentTime );
-				listener.upZ.setValueAtTime( up.z, this.context.currentTime );
+				var scheduleTime = this.context.currentTime;
+
+				listener.positionX.cancelScheduledValues( scheduleTime );
+				listener.positionY.cancelScheduledValues( scheduleTime );
+				listener.positionZ.cancelScheduledValues( scheduleTime );
+				listener.forwardX.cancelScheduledValues( scheduleTime );
+				listener.forwardY.cancelScheduledValues( scheduleTime );
+				listener.forwardZ.cancelScheduledValues( scheduleTime );
+				listener.upX.cancelScheduledValues( scheduleTime );
+				listener.upY.cancelScheduledValues( scheduleTime );
+				listener.upZ.cancelScheduledValues( scheduleTime );
+
+				listener.positionX.setTargetAtTime( position.x, scheduleTime, 0.1 );
+				listener.positionY.setTargetAtTime( position.y, scheduleTime, 0.1 );
+				listener.positionZ.setTargetAtTime( position.z, scheduleTime, 0.1 );
+				listener.forwardX.setTargetAtTime( orientation.x, scheduleTime, 0.1 );
+				listener.forwardY.setTargetAtTime( orientation.y, scheduleTime, 0.1 );
+				listener.forwardZ.setTargetAtTime( orientation.z, scheduleTime, 0.1 );
+				listener.upX.setTargetAtTime( up.x, scheduleTime, 0.1 );
+				listener.upY.setTargetAtTime( up.y, scheduleTime, 0.1 );
+				listener.upZ.setTargetAtTime( up.z, scheduleTime, 0.1 );
 
 			} else {
 
